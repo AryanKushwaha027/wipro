@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'master', url: 'https://github.com/viratkohli/your-repo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('PMD Analysis') {
+            steps {
+                sh 'mvn pmd:pmd'
+            }
+        }
+        stage('Publish PMD Report') {
+            steps {
+                publishHTML(target: [
+                    reportDir: 'target/site',
+                    reportFiles: 'pmd.html',
+                    reportName: 'PMD Report'
+                ])
+            }
+        }
+    }
+}
